@@ -1,258 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Tic-Tac-Toe Game</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            color: #495057;
-            text-align: center;
-            margin: 50px;
-        }
-        h1 {
-            color: #007bff;
-        }
-        #game-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        table {
-            margin-top: 20px;
-            border-collapse: collapse;
-            width: 70%;
-            max-width: 400px;
-        }
-        th, td {
-            width: 33.33%;
-            height: 70px;
-            font-size: 24px;
-            cursor: pointer;
-            background-color: #e9ecef;
-            border: 1px solid #dee2e6;
-            transition: background-color 0.3s ease;
-            position: relative;
-        }
-        th {
-            background-color: #007bff;
-            color: #fff;
-        }
-        .cell-content {
-            width: 100%;
-            height: 100%;
-            font-size: 24px;
-            border: none;
-            background-color: #e9ecef;
-            color: #495057;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease;
-        }
-        .cell-content:hover {
-            background-color: #ced4da;
-        }
-        .win-line {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-color: transparent;
-            z-index: -1;
-        }
-        .win-line.horizontal {
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-        }
-        .win-line.vertical {
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .win-line.diagonal-left {
-            top: 0;
-            left: 0;
-        }
-        .win-line.diagonal-right {
-            top: 0;
-            right: 0;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 24px;
-        }
-        #reset-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 18px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        #reset-btn:hover {
-            background-color: #218838;
-        }
-        #player-names-form {
-            margin-top: 20px;
-        }
-        #player-names-form input {
-            padding: 10px;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-    </style>
+  <link rel="stylesheet" href=".\assets\css\fontawesome-all.min.css">
+  <link rel="stylesheet" href=".\assets\css\customStyle.css">
+  <link
+    href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1"
+  />
+<script>
+.toast {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 300px;
+      padding: 10px;
+      text-align: center;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .toast.success {
+      background-color: #00ff00; /* Green background for success */
+    }
+
+    .toast.error {
+      background-color: #ff0000; /* Red background for error */
+    }
+
+    .toast i {
+      margin-right: 8px;
+    }
+
+    .toast.success i {
+      color: #00ff00; /* Green color for success icon */
+    }
+
+    .toast.error i {
+      color: #ff0000; /* Red color for error icon */
+    }
+    </script>
 </head>
-<body>
 
-<?php
-session_start();
+<body class="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
 
-// Initialize the game state
-if (!isset($_SESSION['board'])) {
-    $_SESSION['board'] = array_fill(0, 3, array_fill(0, 3, null));
-    $_SESSION['currentPlayer'] = 'X';
-}
+  
+  <div
+    class="max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1"
+  >
+    <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+      <div> 
+        
+      </div>
+      <div class="mt-12 flex flex-col items-center">
+        <!-- Other buttons are omitted for brevity -->
+        <div class="mx-auto max-w-xs">
+          <input
+          class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+          type="username"
+          placeholder="Username" name="username" id="username"
+        />
+        <input
+        class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+        type="email"
+        placeholder="email" name="email"email="email"
+      />
+          <!-- <input
+            class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+            type="email"
+            placeholder="Email" name="email" id="email"
+          /> -->
+          <input
+            class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+            type="password"
+            placeholder="Password" name="password" id="password"
+          />
 
-// Process player move
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['row']) && isset($_POST['col'])) {
-    $row = $_POST['row'];
-    $col = $_POST['col'];
+          
+            <input class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5" type="text" placeholder="Mobile Number" name="mobileNumber" id="mobileNumber" />
+            <select class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5" name="gender" id="gender">
+              <option value="" disabled selected>Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          
+          <button id="signupButton"
+            class="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+          >
+         
+            <svg
+              class="w-6 h-6 -ml-2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="8.5" cy="7" r="4" />
+              <path d="M20 8v6M23 11h-6" />
+            </svg>
+            <span class="ml-3">
+              Submit
+            </span>
+          </button>
 
-    // Check if the cell is empty and the game is not over
-    if ($_SESSION['board'][$row][$col] === null && !isGameOver()) {
-        $_SESSION['board'][$row][$col] = $_SESSION['currentPlayer'];
-        switchPlayer();
-    }
-}
+          <!-- Additional Login Options -->
 
-// Process player names form
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['playerX']) && isset($_POST['playerO'])) {
-    $_SESSION['playerX'] = htmlspecialchars($_POST['playerX']);
-    $_SESSION['playerO'] = htmlspecialchars($_POST['playerO']);
-}
 
-// Display player names form if not set
-if (!isset($_SESSION['playerX']) || !isset($_SESSION['playerO'])) {
-    echo '<h1>Enter Player Names</h1>';
-    echo '<div id="player-names-form">';
-    echo '<form method="post">';
-    echo '<input type="text" name="playerX" placeholder="Player X" required>';
-    echo '<input type="text" name="playerO" placeholder="Player O" required>';
-    echo '<button type="submit">Start Game</button>';
-    echo '</form>';
-    echo '</div>';
-    exit; // Stop further execution until names are entered
-}
 
-// Display the game board
-echo '<h1>Responsive Tic-Tac-Toe Game</h1>';
-echo '<div id="game-container">';
-echo '<table>';
-for ($i = 0; $i < 3; $i++) {
-    echo '<tr>';
-    for ($j = 0; $j < 3; $j++) {
-        echo '<td>';
-        echo '<form method="post">';
-        echo '<input type="hidden" name="row" value="' . $i . '">';
-        echo '<input type="hidden" name="col" value="' . $j . '">';
-        echo '<button type="submit" class="cell-content">' . ($_SESSION['board'][$i][$j] ?? '') . '</button>';
-        echo '</form>';
-        echo '<div class="win-line horizontal"></div>';
-        echo '<div class="win-line vertical"></div>';
-        echo '<div class="win-line diagonal-left"></div>';
-        echo '<div class="win-line diagonal-right"></div>';
-        echo '</td>';
-    }
-    echo '</tr>';
-}
-echo '</table>';
+          <p class="mt-6 text-xs text-gray-600 text-center">
+            I agree to abide by templatana's
+            <a href="#" class="border-b border-gray-500 border-dotted">
+              Terms of Service
+            </a>
+            and its
+            <a href="#" class="border-b border-gray-500 border-dotted">
+              Privacy Policy
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="flex-1 bg-indigo-100 text-center hidden lg:flex">
+      <div
+        class="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
+        style="background-image: url('./assets/images/co-working-bg.jpg');"
+      ></div>
+    </div>
+  </div>
+  <div class="toast" id="toast" data-bs-autohide="true">
+    <div class="loader" id="loader"></div>
+    <!-- <div class="toast-body">
+        <p id="error_message"></p>
+    </div>   -->
+</div> 
+<!-- 
+<div id="toast" class="hide"></div>
+<div id="toast" class="hidden">
+  <div id="toastText"></div>
+</div> -->
 
-// Display the winner or current player
-if (isGameOver()) {
-    $winner = getWinner();
-    if ($winner) {
-        echo '<div id="result"><strong>' . $_SESSION['player' . $winner] . ' wins!</strong></div>';
-        // Highlight the winning line
-        highlightWinningLine();
-    } else {
-        echo '<div id="result">It\'s a draw!</div>';
-    }
-} else {
-    echo '<div id="result"><strong>Current Player:</strong> ' . $_SESSION['player' . $_SESSION['currentPlayer']] . '</div>';
-}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var signupButton = document.getElementById('signupButton');
+    var toast = document.getElementById('toast');
+    var loader = document.getElementById('loader');
 
-// Reset the game button
-echo '<form method="post">';
-echo '<button id="reset-btn" type="submit" name="reset">Reset Game</button>';
-echo '</form>';
-echo '</div>';
+    signupButton.addEventListener('click', function() {
+       var username = document.querySelector('input[name="username"]').value;
+        var email = document.querySelector('input[name="email"]').value;
+        var password = document.querySelector('input[name="password"]').value;
+        var mobileNumber = document.querySelector('input[name="mobileNumber"]').value;
+        var gender = document.querySelector('select[name="gender"]').value;
+      sessionStorage.setItem('userEmail', email);
+      var userData = {
+          "username": username,
+          "email": email,
+          "password": password,
+          "mobileNumber": mobileNumber,
+          "gender": gender
+        };
 
-// Reset the game
-if (isset($_POST['reset'])) {
-    session_destroy();
-    header("Location: {$_SERVER['PHP_SELF']}");
-    exit;
-}
+      loader.style.display = 'block'; // Show loader before sending request
 
-function switchPlayer() {
-    $_SESSION['currentPlayer'] = ($_SESSION['currentPlayer'] === 'X') ? 'O' : 'X';
-}
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/salman/API/register.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          loader.style.display = 'none'; // Hide loader after receiving response
 
-function isGameOver() {
-    return isBoardFull() || getWinner();
-}
+          var response = JSON.parse(xhr.responseText);
 
-function isBoardFull() {
-    foreach ($_SESSION['board'] as $row) {
-        if (in_array(null, $row)) {
-            return false;
+          if (response.status === true) {
+            showToast( response.message, 'success');
+          } else {
+            showToast(response.error, 'error');
+          }
         }
+      };
+
+      xhr.send(JSON.stringify(userData));
+    });
+
+    function showToast(message, type) {
+      var iconClass = type === 'success' ? 'fas fa-check-circle' : 'fas fa-times-circle';
+      var toastMessage = `<i class="${iconClass}"></i> ${message}`;
+
+      toast.innerHTML = toastMessage;
+      toast.classList.add(type);
+      toast.classList.remove('hidden');
+      
+      if (type === 'success') {
+        setTimeout(function() {
+        
+          window.location.href = 'dashboard.html'; // Redirect upon success
+        }, 3000);
+      } else {
+        setTimeout(function() {
+          toast.classList.add('hidden');
+          toast.classList.remove('success', 'error');
+        }, 3000);
+      }
     }
-    return true;
+  });
+</script>
+<!-- <script>
+function showToast() {
+  var toast = document.getElementById('toast');
+  toast.innerHTML = 'This is a toast message!';
+  toast.classList.add('show');
+  setTimeout(function(){
+    toast.classList.remove('show');
+  }, 3000); // 3000 milliseconds = 3 seconds
 }
+</script> -->
 
-function getWinner() {
-    // Check rows, columns, and diagonals
-    for ($i = 0; $i < 3; $i++) {
-        if ($_SESSION['board'][$i][0] && $_SESSION['board'][$i][0] === $_SESSION['board'][$i][1] && $_SESSION['board'][$i][1] === $_SESSION['board'][$i][2]) {
-            return $_SESSION['board'][$i][0];
-        }
-        if ($_SESSION['board'][0][$i] && $_SESSION['board'][0][$i] === $_SESSION['board'][1][$i] && $_SESSION['board'][1][$i] === $_SESSION['board'][2][$i]) {
-            return $_SESSION['board'][0][$i];
-        }
-    }
 
-    if ($_SESSION['board'][0][0] && $_SESSION['board'][0][0] === $_SESSION['board'][1][1] && $_SESSION['board'][1][1] === $_SESSION['board'][2][2]) {
-        return $_SESSION['board'][0][0];
-    }
 
-    if ($_SESSION['board'][0][2] && $_SESSION['board'][0][2] === $_SESSION['board'][1][1] && $_SESSION['board'][1][1] === $_SESSION['board'][2][0]) {
-        return $_SESSION['board'][0][2];
-    }
 
-    return null;
-}
 
-function highlightWinningLine() {
-    $winner = getWinner();
-    switch ($winner) {
-        case 'X':
-            echo '<script>document.querySelector(".win-line.horizontal").style.backgroundColor = "#28a745";</script>';
-            break;
-        case 'O':
-            echo '<script>document.querySelector(".win-line.vertical").style.backgroundColor = "#28a745";</script>';
-            break;
-        default:
-            break;
-    }
-}
-?>
 </body>
+
 </html>
